@@ -1,0 +1,28 @@
+## Load libraries
+library(dplyr)
+library(lubridate)
+
+## Retrieve Data
+
+if(!dir.exists("./data")){
+     dir.create("./data")
+     fileURL <- "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip"
+     temp <- tempfile()
+     download.file(fileURL, destfile = temp, method = "libcurl")
+     unzip(temp, exdir = "./data")
+     unlink(temp)
+}
+
+## Set up dataframe
+
+my_data <- read.table("./data/household_power_consumption.txt", 
+                      header = TRUE, sep = ";", na.strings = "?")
+my_data$Date <- dmy(my_data$Date)
+my_data <- filter(my_data, Date == "2007-02-01" | Date == "2007-02-02")
+
+## Generate the plot
+
+png(file = "plot1.png")
+hist(my_data$Global_active_power, col = "red", 
+     main = "Global Active Power", xlab = "Global Active Power (kilowatts)")
+dev.off()
